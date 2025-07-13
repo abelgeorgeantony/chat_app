@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Perfect Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="redirectIfAuthenticated()">
+  <div class="form-container">
+    <h2>Register</h2>
+    <input type="text" id="reg_name" placeholder="Display Name">
+    <input type="email" id="reg_email" placeholder="Email">
+    <input type="password" id="reg_pass" placeholder="Password">
+    <button onclick="register()">Sign Up</button>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>
+
