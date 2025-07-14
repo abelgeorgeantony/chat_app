@@ -4,16 +4,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Perfect Chat</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="utils.js"></script>
+  <script src="auth.js"></script>
 </head>
 <body onload="redirectIfAuthenticated()">
   <div class="form-container">
     <h2>Login</h2>
     <input type="email" id="login_email" placeholder="Email">
     <input type="password" id="login_pass" placeholder="Password">
+    
+    <label for="session_length">Keep me logged in for:</label>
+    <select id="session_length">
+	    <option value="86400">1 Day</option>
+	    <option value="259200">3 Days</option>
+	    <option value="604800">7 Days</option>
+    </select>
+
+
     <button onclick="login()">Login</button>
     <p>Don't have an account? <a href="register.html">Sign up</a></p>
   </div>
-  <script src="auth.js"></script>
 </body>
 </html>
 

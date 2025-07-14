@@ -22,12 +22,15 @@ async function register() {
 }
 
 async function login() {
+  const s_dur = parseInt(document.getElementById('session_length').value);
+
   const res = await fetch(API + 'login.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       email: document.getElementById('login_email').value,
-      password: document.getElementById('login_pass').value
+      password: document.getElementById('login_pass').value,
+      s_duration: s_dur
     })
   });
 
@@ -35,7 +38,7 @@ async function login() {
 
   if (data.success) {
     setCookie('auth_token', data.token, {
-	    maxAge: 86400, // 1 day
+	    maxAge: s_dur,
 	    sameSite: 'Strict',
 	    secure: location.protocol === 'https:'
     });
@@ -89,36 +92,5 @@ async function requireAuth() {
     console.error('Token validation failed:', err);
     window.location.href = 'login.html';
   }
-}
-
-
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
-function setCookie(name, value, options = {}) {
-  let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-
-  if (options.maxAge) {
-    cookie += `; max-age=${options.maxAge}`;
-  }
-  if (options.expires) {
-    cookie += `; expires=${options.expires.toUTCString()}`;
-  }
-  if (options.path) {
-    cookie += `; path=${options.path}`;
-  } else {
-    cookie += `; path=/`;
-  }
-  if (options.sameSite) {
-    cookie += `; SameSite=${options.sameSite}`;
-  }
-  if (options.secure) {
-    cookie += `; Secure`;
-  }
-
-  document.cookie = cookie;
 }
 

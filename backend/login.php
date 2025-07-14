@@ -27,8 +27,12 @@ if (!password_verify($password, $user['password_hash'])) {
 $token = bin2hex(random_bytes(32));
 $user_id = $user['id'];
 
-// Save token in DB
-$conn->query("INSERT INTO sessions (user_id, token, created_at) VALUES ($user_id, '$token', NOW())");
+$duration = isset($data->duration) ? intval($data->duration) : 86400; // default to 1 day
+$expires_at = date('Y-m-d H:i:s', time() + $duration);
+
+$stmt = $conn->prepare("INSERT INTO sessions (user_id, token, created_at, expires_at) VALUES (?, ?, NOW(), ?)");
+$stmt->bind_param("iss", $user_id, $token, $expires_at);
+$stmt->execute();
 
 echo json_encode(["success" => true, "token" => $token, "display_name" => $user['display_name']]);
 ?>

@@ -1,15 +1,22 @@
 <?php
-require 'config.php';
+require_once 'auth.php';
+
+header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents("php://input"));
-$token = $conn->real_escape_string($data->token);
+$token = $data->token ?? '';
 
-$result = $conn->query("SELECT * FROM sessions WHERE token='$token'");
+$user_id = validate_token($token);
 
-if ($result->num_rows > 0) {
-    echo json_encode(["valid" => true]);
+if ($user_id !== false) {
+    echo json_encode([
+        "valid" => true,
+        "user_id" => $user_id
+    ]);
 } else {
-    echo json_encode(["valid" => false]);
+    http_response_code(401);
+    echo json_encode([
+        "valid" => false
+    ]);
 }
 ?>
-

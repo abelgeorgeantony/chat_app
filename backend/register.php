@@ -1,6 +1,4 @@
 <?php
-#echo json_encode(["success" => true]);
-#exit;
 require 'config.php';
 
 $data = json_decode(file_get_contents("php://input"));
