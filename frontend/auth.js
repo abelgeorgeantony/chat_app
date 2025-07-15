@@ -1,6 +1,7 @@
 const API = 'http://localhost:8000/backend/';
 
 async function register() {
+	alert("hello from register");
   const res = await fetch(API + 'register.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

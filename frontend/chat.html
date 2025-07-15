@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Perfect Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="chat.css">
+  <script src="utils.js" defer></script>
+  <script src="auth.js" defer></script>
+  <script src="chat.js" defer></script>
+</head>
+<body onload="requireAuth()">
+  <div id="chat-app">
+    
+    <!-- Sidebar: Chat List -->
+    <aside id="chat-list">
+      <h2>Chats</h2>
+      <ul id="user-list">
+        <!-- Contacts injected here -->
+      </ul>
+    </aside>
+
+    <!-- Chat Window -->
+    <main id="chat-view">
+      <header>
+        <button id="back-btn" onclick="goBackToList()">← Back</button>
+        <h3 id="chat-title">Start a new chat</h3>
+      </header>
+      <div id="messages">
+        <!-- Messages go here -->
+      </div>
+      <form id="message-form" onsubmit="sendMessage(event)">
+        <input type="text" id="message-input" placeholder="Type a message..." required />
+        <button type="submit">Send</button>
+      </form>
+    </main>
+
+  </div>
+</body>
+</html>
+

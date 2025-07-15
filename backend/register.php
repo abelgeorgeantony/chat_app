@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-
+error_log("Hello from register.php", 0);
 $data = json_decode(file_get_contents("php://input"));
 
 $email = $conn->real_escape_string($data->email);
