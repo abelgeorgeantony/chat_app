@@ -8,15 +8,18 @@
   <script src="auth.js" defer></script>
   <script src="chat.js" defer></script>
 </head>
-<body onload="requireAuth()">
+<body>
   <div id="chat-app">
     
     <!-- Sidebar: Chat List -->
     <aside id="chat-list">
-      <h2>Chats</h2>
-      <ul id="user-list">
+      <div class="chat-header">
+        <h2>Chats</h2>
+        <button id="profile-btn" onclick="goToProfile()">👤</button>
+      </div>
+      <div id="user-list">
         <!-- Contacts injected here -->
-      </ul>
+      </div>
     </aside>
 
     <!-- Chat Window -->

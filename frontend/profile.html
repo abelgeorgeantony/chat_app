@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="profile.css">
+  <script src="utils.js" defer></script>
+  <script src="auth.js" defer></script>
+  <script src="profile.js" defer></script>
+</head>
+<body>
+
+  <div class="profile-container">
+    <h2>User Profile</h2>
+
+    <div class="profile-section">
+      <label for="profile-name">Name:</label>
+      <input type="text" id="profile-name" readonly>
+    </div>
+
+    <div class="profile-section">
+      <label for="profile-email">Email:</label>
+      <input type="email" id="profile-email" readonly>
+    </div>
+
+    <div class="profile-section">
+      <label for="profile-password">New Password:</label>
+      <input type="password" id="profile-password" placeholder="Enter new password">
+    </div>
+
+    <button id="update-btn">Update Profile</button>
+    <button class="logout-btn" id="logout-btn">Logout</button>
+  </div>
+
+</body>
+</html>
+
