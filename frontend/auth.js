@@ -1,7 +1,6 @@
 const API = 'http://localhost:8000/backend/';
 
 async function register() {
-	alert("hello from register");
   const res = await fetch(API + 'register.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -50,8 +49,8 @@ async function login() {
 }
 
 
-# For seemless authentication on pages like login.html, register.html and index.html
-async function redirectIfAuthenticated(targetPage = 'chat.html') {
+// For seemless authentication on pages like login.html, register.html and index.html
+async function redirectIfAuthenticated() {
   const token = getCookie('auth_token');
   if (!token) return;
 
@@ -64,13 +63,13 @@ async function redirectIfAuthenticated(targetPage = 'chat.html') {
 
     const data = await res.json();
     if (data.valid) {
-      window.location.href = targetPage;
+      window.location.href = "http://localhost:8000/frontend/chat.html";
     }
   } catch (err) {
     console.error('Auth check failed', err);
   }
 }
-# For gaining auth confirmation for protected tasks on pages like chat.html
+// For gaining auth confirmation for protected tasks on pages like chat.html
 async function requireAuth() {
   const token = getCookie('auth_token');
   if (!token) {

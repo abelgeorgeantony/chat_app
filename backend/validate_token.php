@@ -1,7 +1,7 @@
 <?php
 require_once 'auth.php';
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents("php://input"));
 $token = $data->token ?? '';
