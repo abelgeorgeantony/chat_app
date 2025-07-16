@@ -40,3 +40,14 @@ function deleteCookie(name) {
   setCookie(name, '', { maxAge: 0 });
 }
 
+
+// Mobile viewport height fix for all pages
+function fixMobileViewport() {
+  let vh = window.innerHeight * 0.01; 
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Run on load & resize
+window.addEventListener('load', fixMobileViewport);
+window.addEventListener('resize', fixMobileViewport);
+
