@@ -1,12 +1,11 @@
-body {
-  height: auto;         /* allow normal flow */
-  overflow: auto;       /* allow scroll if needed */
-  display: block;       /* normal page flow */
-  background: #f5f5f5;  /* matches base */
-}
-
-
 /* === Auth Page Specific Styles === */
+
+/* Reset body for auth pages */
+body.auth-page {
+  height: auto;
+  overflow: auto;
+  background: #f5f5f5;
+}
 
 /* Center the auth form */
 .auth-container {
@@ -29,11 +28,6 @@ body {
   color: #555;
 }
 
-.auth-container input {
-  max-width: 100%;
-}
-
-/* Links under forms */
 .auth-links {
   margin-top: 15px;
   font-size: 0.9em;
@@ -46,5 +40,10 @@ body {
 
 .auth-links a:hover {
   text-decoration: underline;
+}
+
+/* Inputs stay within container */
+.auth-container input {
+  max-width: 100%;
 }
 
