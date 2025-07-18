@@ -16,7 +16,13 @@
     <aside id="chat-list">
       <div class="chat-header">
         <h2>Chats</h2>
+	<button id="add-contact-btn" onclick="showAddContactForm()">+ Add</button>
         <button id="profile-btn" onclick="goToProfile()">👤</button>
+      </div>
+      <div id="add-contact-form" style="display: none; margin-top: 10px;">
+	      <input type="text" id="new-contact-username" placeholder="Enter username">
+	      <button onclick="addContact()">Add</button>
+	      <button onclick="hideAddContactForm()">Cancel</button>
       </div>
       <div id="user-list">
         <!-- Contacts injected here -->
@@ -32,9 +38,9 @@
       <div id="messages">
         <!-- Messages go here -->
       </div>
-      <form id="message-form" onsubmit="sendMessage(event)">
+      <form id="message-form">
         <input type="text" id="message-input" placeholder="Type a message..." required />
-        <button type="submit">Send</button>
+        <button type="button" id="send-button">Send</button>
       </form>
     </main>
 
