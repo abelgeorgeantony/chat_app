@@ -23,13 +23,15 @@ body.profile-page {
 }
 
 /* Container Defaults */
-.container {
+.form-container {
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Headings */
@@ -42,7 +44,6 @@ h1, h2, h3 {
 input[type="text"],
 input[type="email"],
 input[type="password"] {
-  width: 100%;
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
@@ -51,7 +52,6 @@ input[type="password"] {
 }
 
 button {
-  width: 100%;
   padding: 10px;
   margin-top: 10px;
   font-size: 1em;

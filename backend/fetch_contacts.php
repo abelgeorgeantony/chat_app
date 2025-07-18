@@ -15,12 +15,13 @@ if (!$user_id) {
 
 // Fetch from contacts_<user_id>
 $contacts_table = "contacts_" . intval($user_id);
+error_log("$contacts_table",0);
 
 require_once "config.php";
 global $conn;
 
 $sql = "
-    SELECT c.contact_id, u.username 
+    SELECT c.contact_id, u.name 
     FROM $contacts_table c
     JOIN users u ON c.contact_id = u.id
     ORDER BY c.added_at DESC

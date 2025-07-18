@@ -8,7 +8,13 @@ body.auth-page {
 }
 
 /* Center the auth form */
-.auth-container {
+body.index-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
   max-width: 400px;
   margin: 80px auto;
   padding: 20px;
@@ -18,12 +24,12 @@ body.auth-page {
   text-align: center;
 }
 
-.auth-container h2 {
+.form-container h2 {
   margin-bottom: 20px;
   font-size: 1.8em;
 }
 
-.auth-container p {
+.form-container p {
   margin-bottom: 20px;
   color: #555;
 }

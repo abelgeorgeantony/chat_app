@@ -15,7 +15,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 $hash = password_hash($password, PASSWORD_BCRYPT);
 
-$stmt = $conn->prepare("INSERT INTO users (email, password_hash, display_name) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)");
 $stmt->bind_param("sss", $email, $hash, $display_name);
 
 if ($stmt->execute()) {

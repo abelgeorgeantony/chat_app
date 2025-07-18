@@ -1,8 +1,7 @@
-const API = "http://localhost:8000/backend/";
 let ws;
 
 // Load contacts into sidebar
-function loadContacts() {
+async function loadContacts() {
   const token = getCookie("auth_token");
   const res = await fetch(API + "fetch_contacts.php", {
     method: "POST",
