@@ -7,7 +7,8 @@ async function register() {
     body: JSON.stringify({
       email: document.getElementById('reg_email').value,
       password: document.getElementById('reg_pass').value,
-      display_name: document.getElementById('reg_name').value
+      display_name: document.getElementById('reg_name').value,
+      username: document.getElementById("reg_username").value;
     })
   });
 
@@ -15,7 +16,7 @@ async function register() {
 
   if (data.success) {
     alert('Registered successfully! Redirecting to login...');
-    window.location.href = 'login.html';
+    window.location.replace('login.html');
   } else {
     alert(data.error);
   }
@@ -28,7 +29,7 @@ async function login() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: document.getElementById('login_email').value,
+      username: document.getElementById('login_username').value,
       password: document.getElementById('login_pass').value,
       s_duration: s_dur
     })
@@ -42,7 +43,7 @@ async function login() {
 	    sameSite: 'Strict',
 	    secure: location.protocol === 'https:'
     });
-    window.location.href = 'chat.html';
+    window.location.replace('chat.html');
   } else {
     alert(data.error);
   }
@@ -63,7 +64,7 @@ async function redirectIfAuthenticated() {
 
     const data = await res.json();
     if (data.valid) {
-      window.location.href = "http://localhost:8000/frontend/chat.html";
+      window.location.replace("http://localhost:8000/frontend/chat.html");
     }
   } catch (err) {
     console.error('Auth check failed', err);
@@ -73,7 +74,7 @@ async function redirectIfAuthenticated() {
 async function requireAuth() {
   const token = getCookie('auth_token');
   if (!token) {
-    window.location.href = 'login.html';
+    window.location.replace('login.html');
     return;
   }
 
@@ -86,11 +87,11 @@ async function requireAuth() {
 
     const data = await res.json();
     if (!data.valid) {
-      window.location.href = 'login.html';
+      window.location.replace('login.html');
     }
   } catch (err) {
     console.error('Token validation failed:', err);
-    window.location.href = 'login.html';
+    window.location.replace('login.html');
   }
 }
 

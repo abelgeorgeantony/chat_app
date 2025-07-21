@@ -8,17 +8,17 @@ It supports **user authentication**, **per-user contacts**, and **offline messag
 ## Setup on a New Device
 
 ### 1. Requirements
-- PHP >= 8.0
+- PHP server
 - MySQL/MariaDB
 - [Composer](https://getcomposer.org/) for dependency management
-- A web server (Apache, Nginx, or PHP’s built-in server)
+- Ratchet (Web Socket)
 
 ---
 
 ### 2. Clone the Project
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/abelgeorgeantony/chat_app.git
 cd chat_app
 ```
 
@@ -26,7 +26,7 @@ cd chat_app
 
 ### 3. Configure the Database
 
-1. Create a new MySQL database, e.g. `chat_app`
+1. Create a new MySQL database `chat_app`
 2. Import the base schema:
    ```bash
    mysql -u root -p chat_app < backend/schema.sql
@@ -57,17 +57,17 @@ This will create the `vendor/` folder with required dependencies.
 
 ## Starting the Server
 
-Before starting, make sure MySQL (mysqld) is running.  
+Before starting, make sure *MySQL (mysqld)* is running.  
 Without the database service running, the backend will fail to connect.
 
 You need two servers running simultaneously:  
 
 ---
 
-### 1. Start the PHP API Server
-From the project root (or backend folder), run:
+### 1. Start the PHP Server
+From the project root, run:
 ```bash
-php -S localhost:8000 -t .
+php -S localhost:8000 -t ./
 ```
 This will serve all PHP backend APIs like:
 - `http://localhost:8000/backend/register.php`
@@ -91,13 +91,8 @@ WebSocket Chat Server running on port 8080...
 ### 3. Open the Frontend
 Open your browser and go to:
 ```
-http://localhost:8000/frontend/chat.html
+http://localhost:8000/index.html
 ```
 Login or register a new user and start chatting.
 
 ---
-
-## License
-
-MIT License – feel free to modify and use.
-

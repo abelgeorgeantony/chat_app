@@ -3,10 +3,10 @@ require 'config.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
-$email = $conn->real_escape_string($data->email);
+$username = $conn->real_escape_string($data->username);
 $password = $data->password;
 
-$result = $conn->query("SELECT * FROM users WHERE email='$email'");
+$result = $conn->query("SELECT * FROM users WHERE username='$username'");
 
 if ($result->num_rows === 0) {
     http_response_code(401);

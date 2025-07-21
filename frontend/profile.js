@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   //await loadUserProfile();
 
   // Attach button events
+  document.getElementById("gotochat-btn").addEventListener("click", () => {
+	  window.location.replace("chat.html");
+  });
   document.getElementById("update-btn").addEventListener("click", updateProfile);
   document.getElementById("logout-btn").addEventListener("click", logoutUser);
 });
@@ -13,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadUserProfile() {
   const token = getCookie("auth_token");
   if (!token) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
     return;
   }
 
@@ -30,11 +33,11 @@ async function loadUserProfile() {
       document.getElementById("profile-name").value = data.user.name;
       document.getElementById("profile-email").value = data.user.email;
     } else {
-      window.location.href = "login.html";
+      window.location.replace("login.html");
     }
   } catch (err) {
     console.error("Error loading profile:", err);
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   }
 }
 
@@ -67,7 +70,9 @@ async function updateProfile() {
 }
 
 function logoutUser() {
+  let logoutconfirmed = confirm("Do you really want to logout?");
+  if(!logoutconfirmed) {return;}
   deleteCookie("auth_token");
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 }
 

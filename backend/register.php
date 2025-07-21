@@ -3,6 +3,7 @@ require 'config.php';
 error_log("Hello from register.php", 0);
 $data = json_decode(file_get_contents("php://input"));
 
+$username = $conn->real_escape_string($data->username);
 $email = $conn->real_escape_string($data->email);
 $password = $data->password;
 $display_name = $conn->real_escape_string($data->display_name);
@@ -15,8 +16,8 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 $hash = password_hash($password, PASSWORD_BCRYPT);
 
-$stmt = $conn->prepare("INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $email, $hash, $display_name);
+$stmt = $conn->prepare("INSERT INTO users (username, display_name, email, password_hash) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $username, $display_name, $email, $hash);
 
 if ($stmt->execute()) {
     $new_user_id = $stmt->insert_id;  // Get new user's ID

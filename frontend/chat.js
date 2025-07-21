@@ -48,7 +48,7 @@ function hideAddContactForm() {
 }
 
 function goToProfile() {
-  window.location.href = "profile.html";
+  window.location.replace("profile.html");
 }
 
 function goBackToList() {
@@ -125,4 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
   requireAuth();
   loadContacts();
   connectWebSocket();
+});
+
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
 });

@@ -34,6 +34,11 @@ body.index-page {
   color: #555;
 }
 
+.form-container label {
+  font-size: 150%;
+  align-self: flex-start;
+}
+
 .auth-links {
   margin-top: 15px;
   font-size: 0.9em;
@@ -47,9 +52,3 @@ body.index-page {
 .auth-links a:hover {
   text-decoration: underline;
 }
-
-/* Inputs stay within container */
-.auth-container input {
-  max-width: 100%;
-}
-

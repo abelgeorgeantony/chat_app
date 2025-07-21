@@ -16,11 +16,10 @@ html, body {
 }
 
 /* Page-aware mobile height fix */
-body.chat-page,
-body.profile-page {
+/*body {
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
-}
+}*/
 
 /* Container Defaults */
 .form-container {
@@ -79,15 +78,3 @@ button:hover {
 .text-center {
   text-align: center;
 }
-
-/* === Generic Mobile Responsive Adjustments === */
-@media (max-width: 768px) {
-  .container {
-    margin: 20px auto;
-    padding: 15px;
-  }
-  button {
-    font-size: 0.95em;
-  }
-}
-
