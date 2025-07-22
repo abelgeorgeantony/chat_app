@@ -90,7 +90,8 @@
 #chat-view header {
   flex-shrink: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: start;
   padding: 10px;
   background: #eee;
   border-bottom: 1px solid #ccc;
@@ -112,6 +113,11 @@
   overflow-y: auto;
   padding: 10px;
   background-color: #fff;
+  display: flex;
+}
+
+#messages h1 {
+  align-self: center;
 }
 
 #message-form {
@@ -130,6 +136,47 @@
 #message-form button {
   padding: 10px 20px;
 }
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+.message.incoming {
+  background: #eee;
+  align-self: flex-start;
+}
+
+.message.outgoing {
+  background: #007bff;
+  color: white;
+  align-self: flex-end;
+}
+
+.message-text {
+  display: block;
+}
+
+.message-time {
+  font-size: 0.75em;
+  opacity: 0.6;
+  margin-top: 4px;
+  display: block;
+  text-align: right;
+}
+
 
 /* === Mobile Responsive for Chat Layout === */
 @media (max-width: 768px) {

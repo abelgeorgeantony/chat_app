@@ -21,7 +21,7 @@ require_once "config.php";
 global $conn;
 
 $sql = "
-    SELECT c.contact_id, u.name 
+    SELECT c.contact_id, u.username, u.display_name
     FROM $contacts_table c
     JOIN users u ON c.contact_id = u.id
     ORDER BY c.added_at DESC

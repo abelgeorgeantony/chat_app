@@ -8,7 +8,7 @@ async function register() {
       email: document.getElementById('reg_email').value,
       password: document.getElementById('reg_pass').value,
       display_name: document.getElementById('reg_name').value,
-      username: document.getElementById("reg_username").value;
+      username: document.getElementById("reg_username").value
     })
   });
 

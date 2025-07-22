@@ -84,7 +84,8 @@ class ChatServer implements MessageComponentInterface {
 
         $sender_id = $this->userConnections[$conn->resourceId];
         $receiver_id = $data['receiver_id'] ?? null;
-        $message = $data['message'] ?? null;
+	$message = $data['message'] ?? null;
+	error_log("Rid: $receiver_id");
 
         if (!$receiver_id || !$message) {
             error_log("⚠️ Invalid message payload from $sender_id");
