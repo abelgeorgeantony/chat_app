@@ -1,3 +1,8 @@
+SERVER_IP = "192.168.1.5";
+
+API = "http://" + SERVER_IP + ":8000/backend/";
+WS_URL = "ws://" + SERVER_IP + ":8080";
+
 // Get a cookie by name
 function getCookie(name) {
   const value = `; ${document.cookie}`;

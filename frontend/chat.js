@@ -1,4 +1,6 @@
 let ws;
+let unreadCounts = {};  // contactId => number of unread messages
+let currentChatUser = null;  // currently open chat user
 
 // Load contacts into sidebar
 async function loadContacts() {
@@ -29,12 +31,33 @@ async function loadContacts() {
         <div class="contact-lastmsg">Tap to chat</div>
       </div>
     `;
+    contactDiv.setAttribute("data-contact-id", contact.contact_id);
 
     // Click → open chat
     contactDiv.onclick = () => openChatWith(contact.contact_id, contact.display_name, contact.username);
 
     list.appendChild(contactDiv);
   });
+}
+
+async function loadOfflineMessages() {
+  const token = getCookie("auth_token");
+  
+  const res = await fetch(API + "fetch_offline_messages.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token })
+  });
+
+  const data = await res.json();
+
+  if (data.success && data.messages.length > 0) {
+    data.messages.forEach(m => {
+      saveMessageLocally(m.sender_id, "them", m.message, new Date(m.created_at).getTime());
+      // Display them
+      handleIncomingMessage(m.sender_id, m.message, new Date(m.created_at).getTime());
+    });
+  }
 }
 
 async function addContact() {
@@ -46,7 +69,7 @@ async function addContact() {
 
   const token = getCookie("auth_token");
 
-  const res = await fetch("../backend/add_contact.php", {
+  const res = await fetch(API + "add_contact.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, username })
@@ -116,17 +139,63 @@ function displayMessage(sender, messageText, timestamp = Date.now()) {
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+function handleIncomingMessage(senderId, message, timestamp) {
+  console.log("current id:" + currentChatUser);
+  console.log("sender id: " + senderId);
+  // If currently viewing this chat
+  if (Number(currentChatUser) === Number(senderId)) {
+    // Show in the chat window
+    displayMessage("them", message);
+
+    // Save locally
+    saveMessageLocally(senderId, "them", message);
+
+  } else {
+    // Not in this chat → increment unread count
+    unreadCounts[senderId] = (unreadCounts[senderId] || 0) + 1;
+
+    // Update contacts list UI
+    updateUnreadBadge(senderId);
+
+    // Save locally anyway
+    saveMessageLocally(senderId, "them", message);
+  }
+}
+
+function updateUnreadBadge(senderId) {
+  const contactElement = document.querySelector(`[data-contact-id="${senderId}"]`);
+  if (!contactElement) {
+    //Need to add functionality which adds a new contact when an non-contact messages!
+	  return; //for now
+  }
+
+  // Remove any existing badge
+  let badge = contactElement.querySelector(".unread-badge");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.classList.add("unread-badge");
+    contactElement.appendChild(badge);
+  }
+
+  badge.textContent = unreadCounts[senderId];
+  badge.style.display = unreadCounts[senderId] > 0 ? "inline-block" : "none";
+}
 
 async function openChatWith(contactId, displayname, username) {
+  document.getElementById("messages").innerHTML = "";
   document.getElementById("chat-title").textContent = displayname;
   document.getElementById("chat-subtitle").textContent = "@" + username;
-  document.getElementById("messages").innerHTML = "Loading chat...";
+  /*Need to set a message loading waiter*/
   document.getElementById("chat-view").classList.add("active");
   document.getElementById("chat-list").classList.add("hidden");
   const messages = loadMessagesLocally(contactId);
   messages.forEach(m => {
     displayMessage(m.sender, m.message, m.timestamp);
   });
+  // Clear unread count
+  unreadCounts[contactId] = 0;
+  updateUnreadBadge(contactId);
+  currentChatUser = contactId;
   document.getElementById("send-button").onclick = () => sendMessage(contactId);
 }
 
@@ -139,7 +208,7 @@ function connectWebSocket() {
     return;
   }
 
-  ws = new WebSocket("ws://localhost:8080");
+  ws = new WebSocket(WS_URL);
 
   ws.onopen = () => {
     console.log("✅ WebSocket connected");
@@ -152,8 +221,7 @@ function connectWebSocket() {
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.type === "message") {
-      saveMessageLocally(data.from, "me", data.message);
-      displayIncomingMessage(data.from, data.message);
+      handleIncomingMessage(data.from, data.message, new Date().getTime());
     }
   };
 
@@ -162,20 +230,19 @@ function connectWebSocket() {
 }
 
 function sendMessage(contactId) {
-	console.log(contactId);
+  console.log(contactId);
   const input = document.getElementById("message-input");
   const message = input.value.trim();
   if (!message) return;
-  /*if (!ws || ws.readyState !== WebSocket.OPEN) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
     console.warn("❌ WebSocket not open yet!");
     return;
-  }*/
-
-  // Append locally
-  displayMessage("me", message);
+  }
 
   saveMessageLocally(contactId, "me", message);
-
+  // Append locally
+  displayMessage("me", message);
+ 
   input.value = "";
   // Later: Send message via WebSocket
   ws.send(JSON.stringify({
@@ -185,14 +252,14 @@ function sendMessage(contactId) {
   }));
 }
 
-function saveMessageLocally(contactId, sender, message) {
+function saveMessageLocally(contactId, sender, message, timestamp = Date.now()) {
   const key = `chat_user_${contactId}`;
   let messages = JSON.parse(localStorage.getItem(key)) || [];
   
   messages.push({
     sender: sender,
     message: message,
-    timestamp: Date.now()
+    timestamp: timestamp
   });
 
   localStorage.setItem(key, JSON.stringify(messages));
@@ -212,6 +279,7 @@ function clearConversationLocally(contactId) {
 document.addEventListener("DOMContentLoaded", () => {
   requireAuth();
   loadContacts();
+  loadOfflineMessages();
   connectWebSocket();
 });
 

@@ -16,31 +16,33 @@
     <aside id="chat-list">
       <div class="chat-header">
         <h2>Chats</h2>
-	<button id="add-contact-btn" onclick="showAddContactForm()">+ Add</button>
-        <button id="profile-btn" onclick="goToProfile()">👤</button>
+	<button id="profile-btn" onclick="goToProfile()">👤</button>
       </div>
       <div id="add-contact-form" style="display: none; margin-top: 10px;">
-	      <input type="text" id="new-contact-username" placeholder="Enter username">
-	      <button onclick="addContact()">Add</button>
-	      <button onclick="hideAddContactForm()">Cancel</button>
+	<input type="text" id="new-contact-username" placeholder="Enter username">
+	<button onclick="addContact()">Add</button>
+	<button onclick="hideAddContactForm()">Cancel</button>
       </div>
       <div id="user-list">
         <!-- Contacts injected here -->
       </div>
+      <button id="add-contact-btn" class="add-contact-float" onclick="showAddContactForm()">+ Add</button>
     </aside>
 
     <!-- Chat Window -->
     <main id="chat-view">
       <header>
-        <button id="back-btn" onclick="goBackToList()">← Back</button>
-	<h3 id="chat-title">Deepen your connections!</h3><br>
-	<p id="chat-subtitle"></p>
+	<button id="back-btn" onclick="goBackToList()">←<br></button>
+	<div id="chat-view-titlebar">
+		<h3 id="chat-title">Deepen your connections!</h3>
+		<p id="chat-subtitle"></p>
+	</div>
       </header>
       <div id="messages">
 	      <h1>Select a contact<br>from the left<br>to start chatting!</h1>
       </div>
       <form id="message-form">
-        <input type="text" id="message-input" placeholder="Type a message..." required />
+	      <textarea id="message-input" placeholder="Type a message..." required> </textarea>
         <button type="button" id="send-button">Send</button>
       </form>
     </main>
