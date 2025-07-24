@@ -62,7 +62,7 @@ async function redirectIfAuthenticated() {
 
     const data = await res.json();
     if (data.valid) {
-      window.location.replace("http://localhost:8000/frontend/chat.html");
+      window.location.replace(FRONTEND+"chat.html");
     }
   } catch (err) {
     console.error('Auth check failed', err);

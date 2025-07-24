@@ -1,5 +1,6 @@
-SERVER_IP = "192.168.1.5";
+SERVER_IP = "192.168.1.7";
 
+FRONTEND = "http://" + SERVER_IP + ":8000/frontend/";
 API = "http://" + SERVER_IP + ":8000/backend/";
 WS_URL = "ws://" + SERVER_IP + ":8080";
 

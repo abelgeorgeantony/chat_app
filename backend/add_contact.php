@@ -28,7 +28,6 @@ if ($result->num_rows === 0) {
 
 $row = $result->fetch_assoc();
 $contact_id = intval($row['id']);
-
 if ($contact_id === $user_id) {
     echo json_encode(["success" => false, "error" => "Cannot add yourself"]);
     exit;
@@ -46,8 +45,12 @@ $exists = $stmt->get_result();
 if ($exists->num_rows === 0) {
     $stmt = $conn->prepare("INSERT INTO $contacts_table (contact_id) VALUES (?)");
     $stmt->bind_param("i", $contact_id);
-    $stmt->execute();
+    if ($stmt->execute()) {
+	echo json_encode(["success" => true])
+    }
+} else {
+    echo json_encode(["success" => false, "error" => "User is already a contact!"]);
 }
 
-echo json_encode(["success" => true]);
+echo json_encode(["success" => false, "error" => "Backend error, code out of logical bounds"]);
 

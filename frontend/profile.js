@@ -21,7 +21,7 @@ async function loadUserProfile() {
   }
 
   try {
-    const res = await fetch("backend/get_profile.php", {
+    const res = await fetch(API+"get_profile.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token })
@@ -51,7 +51,7 @@ async function updateProfile() {
   }
 
   try {
-    const res = await fetch("backend/update_profile.php", {
+    const res = await fetch(API + "update_profile.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, new_password: newPassword })
