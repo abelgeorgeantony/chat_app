@@ -46,7 +46,7 @@ if ($exists->num_rows === 0) {
     $stmt = $conn->prepare("INSERT INTO $contacts_table (contact_id) VALUES (?)");
     $stmt->bind_param("i", $contact_id);
     if ($stmt->execute()) {
-	echo json_encode(["success" => true])
+	echo json_encode(["success" => true]);
     }
 } else {
     echo json_encode(["success" => false, "error" => "User is already a contact!"]);
