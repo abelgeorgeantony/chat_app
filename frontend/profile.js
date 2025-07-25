@@ -1,27 +1,53 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // First, require auth before loading profile
+  // First, require auth before doing anything
   await requireAuth();
 
-  // Then load the profile details
-  //await loadUserProfile();
+  // Load the user's profile data
+  await loadUserProfile();
 
   // Attach button events
   document.getElementById("gotochat-btn").addEventListener("click", () => {
-	  window.location.replace("chat.html");
+    window.location.replace("chat.html");
   });
-  document.getElementById("update-btn").addEventListener("click", updateProfile);
   document.getElementById("logout-btn").addEventListener("click", logoutUser);
+  document.getElementById("edit-btn").addEventListener("click", () => toggleEditMode(true));
+  document.getElementById("cancel-btn").addEventListener("click", () => toggleEditMode(false));
+  document.getElementById("save-btn").addEventListener("click", updateProfile);
 });
+
+// A store for the original data to revert on cancel
+let originalProfileData = {};
+
+function toggleEditMode(isEditing) {
+  const form = document.getElementById("profile-form");
+  const fields = ['profile-display-name', 'profile-username', 'profile-bio'];
+
+  fields.forEach(id => {
+    const element = document.getElementById(id);
+    if (isEditing) {
+      // Store original values before enabling edit
+      originalProfileData[id] = element.value;
+      element.readOnly = false;
+    } else {
+      // Restore original values on cancel
+      element.value = originalProfileData[id] || '';
+      element.readOnly = true;
+    }
+  });
+
+  // Toggle button visibility
+  document.getElementById("edit-btn").style.display = isEditing ? "none" : "block";
+  document.getElementById("save-btn").style.display = isEditing ? "block" : "none";
+  document.getElementById("cancel-btn").style.display = isEditing ? "block" : "none";
+}
 
 async function loadUserProfile() {
   const token = getCookie("auth_token");
-  if (!token) {
-    window.location.replace("login.html");
-    return;
-  }
+  if (!token) return;
 
   try {
-    const res = await fetch(API+"get_profile.php", {
+    // YOU WILL NEED TO CREATE 'get_profile.php' on your backend
+    const res = await fetch(API + "fetch_profile.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token })
@@ -29,40 +55,45 @@ async function loadUserProfile() {
 
     const data = await res.json();
 
-    if (data.valid) {
-      document.getElementById("profile-name").value = data.user.name;
+    if (data.success) {
+      document.getElementById("profile-display-name").value = data.user.display_name;
+      document.getElementById("profile-username").value = data.user.username;
       document.getElementById("profile-email").value = data.user.email;
+      document.getElementById("profile-bio").value = data.user.bio;
     } else {
-      window.location.replace("login.html");
+      alert("Could not load profile data.");
     }
   } catch (err) {
     console.error("Error loading profile:", err);
-    window.location.replace("login.html");
   }
 }
 
 async function updateProfile() {
   const token = getCookie("auth_token");
-  const newPassword = document.getElementById("profile-password").value.trim();
-
-  if (!newPassword) {
-    alert("Enter a new password to update.");
-    return;
-  }
+  
+  const updatedData = {
+    token: token,
+    display_name: document.getElementById("profile-display-name").value,
+    username: document.getElementById("profile-username").value,
+    bio: document.getElementById("profile-bio").value
+  };
 
   try {
+    // YOU WILL NEED TO CREATE 'update_profile.php' on your backend
     const res = await fetch(API + "update_profile.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, new_password: newPassword })
+      body: JSON.stringify(updatedData)
     });
 
-    const data = await res.json();
+    const result = await res.json();
 
-    if (data.success) {
+    if (result.success) {
       alert("Profile updated successfully!");
+      toggleEditMode(false); // Exit edit mode
+      await loadUserProfile(); // Reload data to confirm
     } else {
-      alert("Update failed: " + (data.error || "Unknown error"));
+      alert("Update failed: " + (result.error || "Unknown error"));
     }
   } catch (err) {
     console.error("Update error:", err);
@@ -70,9 +101,8 @@ async function updateProfile() {
 }
 
 function logoutUser() {
-  let logoutconfirmed = confirm("Do you really want to logout?");
-  if(!logoutconfirmed) {return;}
-  deleteCookie("auth_token");
-  window.location.replace("login.html");
+  if (confirm("Do you really want to logout?")) {
+    deleteCookie("auth_token");
+    window.location.replace("login.html");
+  }
 }
-

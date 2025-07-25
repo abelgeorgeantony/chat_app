@@ -1,24 +1,116 @@
-async function register() {
-  const res = await fetch(API + 'register.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: document.getElementById('reg_email').value,
-      password: document.getElementById('reg_pass').value,
-      display_name: document.getElementById('reg_name').value,
-      username: document.getElementById("reg_username").value
-    })
-  });
+let registrationState = {
+    email: '',
+    token: ''
+};
 
-  const data = await res.json();
+// --- Main Registration Functions ---
 
-  if (data.success) {
-    alert('Registered successfully! Redirecting to login...');
-    window.location.replace('login.html');
-  } else {
-    alert(data.error);
-  }
+async function handleStep1(event) {
+    event.preventDefault();
+    const messageArea = document.getElementById('message-area');
+    messageArea.textContent = 'Creating account...';
+    
+    registrationState.email = document.getElementById('reg_email').value;
+    const payload = {
+        username: document.getElementById('reg_username').value,
+        email: registrationState.email,
+        password: document.getElementById('reg_pass').value,
+    };
+
+    // This now points to your original register.php script
+    const res = await fetch(API + 'register.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        messageArea.textContent = '';
+        document.getElementById('verification-email-display').textContent = registrationState.email;
+        showStep(2);
+    } else {
+        messageArea.textContent = 'Error: ' + data.error;
+    }
 }
+
+async function handleStep2(event) {
+    event.preventDefault();
+    const messageArea = document.getElementById('message-area');
+    messageArea.textContent = 'Verifying code...';
+
+    const payload = {
+        email: registrationState.email,
+        code: document.getElementById('verification_code').value,
+        purpose: 'registration' // General purpose verification
+    };
+
+    const res = await fetch(API + 'verify_email.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        messageArea.textContent = '';
+        registrationState.token = data.token; // Save the session token
+        setCookie('auth_token', registrationState.token, { maxAge: 86400 });
+        showStep(3);
+    } else {
+        messageArea.textContent = 'Error: ' + data.error;
+    }
+}
+
+async function handleStep3(event) {
+    event.preventDefault();
+    const messageArea = document.getElementById('message-area');
+    messageArea.textContent = 'Saving profile...';
+
+    const formData = new FormData();
+    formData.append('token', registrationState.token);
+    formData.append('display_name', document.getElementById('reg_name').value);
+    formData.append('bio', document.getElementById('reg_bio').value);
+    
+    const pfpInput = document.getElementById('pfp_input');
+    if (pfpInput.files.length > 0) {
+        formData.append('profile_picture', pfpInput.files[0]);
+    }
+
+    // Use the existing update_profile.php endpoint
+    const res = await fetch(API + 'update_profile.php', {
+        method: 'POST',
+        body: formData // No Content-Type header needed, browser sets it for FormData
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        window.location.replace('chat.html');
+    } else {
+        messageArea.textContent = 'Error: ' + data.error;
+    }
+}
+
+// --- Helper Functions ---
+
+function showStep(stepNumber) {
+    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+    document.getElementById(`step${stepNumber}`).classList.add('active');
+}
+
+// Attach event listener for profile picture preview
+document.addEventListener('DOMContentLoaded', () => {
+    const pfpInput = document.getElementById('pfp_input');
+    if (pfpInput) {
+        pfpInput.onchange = (event) => {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('pfp-preview').src = URL.createObjectURL(file);
+            }
+        };
+    }
+});
+
 
 async function login() {
   const s_dur = parseInt(document.getElementById('session_length').value);

@@ -10,30 +10,43 @@
   <script src="profile.js" defer></script>
 </head>
 <body class="profile-page">
-  <button id="gotochat-btn">&lt;&lt;&nbsp;BACK</button>
+  <div class="profile-actions-top">
+    <button id="gotochat-btn">&lt;&lt;&nbsp;Back to Chat</button>
+  </div>
+  
   <div class="profile-container">
     <h2>User Profile</h2>
 
-    <div class="profile-section">
-      <label for="profile-name">Name:</label>
-      <input type="text" id="profile-name" readonly>
+    <form id="profile-form">
+      <div class="profile-section">
+        <label for="profile-display-name">Display Name:</label>
+        <input type="text" id="profile-display-name" readonly>
+      </div>
+
+      <div class="profile-section">
+        <label for="profile-username">Username:</label>
+        <input type="text" id="profile-username" readonly>
+      </div>
+      
+      <div class="profile-section">
+        <label for="profile-email">Email:</label>
+        <input type="email" id="profile-email" disabled> </div>
+
+      <div class="profile-section">
+        <label for="profile-bio">Bio:</label>
+        <textarea id="profile-bio" rows="4" readonly></textarea>
+      </div>
+    </form>
+    
+    <div class="profile-buttons">
+      <button id="edit-btn">Edit Profile</button>
+      <button id="save-btn" style="display:none;">Save Changes</button>
+      <button id="cancel-btn" style="display:none;" class="cancel-btn">Cancel</button>
     </div>
 
-    <div class="profile-section">
-      <label for="profile-email">Email:</label>
-      <input type="email" id="profile-email" readonly>
-    </div>
-
-    <div class="profile-section">
-      <label for="profile-password">New Password:</label>
-      <input type="password" id="profile-password" placeholder="Enter new password">
-    </div>
-
-    <button id="update-btn">Update Profile</button>
   </div>
 
   <button class="logout-btn" id="logout-btn">Logout</button>
 
 </body>
 </html>
-
