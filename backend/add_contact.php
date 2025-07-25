@@ -52,5 +52,5 @@ if ($exists->num_rows === 0) {
     echo json_encode(["success" => false, "error" => "User is already a contact!"]);
 }
 
-echo json_encode(["success" => false, "error" => "Backend error, code out of logical bounds"]);
+//echo json_encode(["success" => false, "error" => "Backend error, code out of logical bounds"]);
 
