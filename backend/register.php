@@ -1,65 +1,75 @@
 <?php
 require 'config.php';
-error_log("Hello from register.php", 0);
+//header('Content-Type: application/json');
+
 $data = json_decode(file_get_contents("php://input"));
 
 $username = $conn->real_escape_string($data->username);
+$default_display_name = strtoupper($username);
 $email = $conn->real_escape_string($data->email);
 $password = $data->password;
-$display_name = $conn->real_escape_string($data->display_name);
 
+// --- Basic Validation ---
+if (empty($username) || empty($email) || empty($password)) {
+    echo json_encode(["success" => false, "error" => "All fields are required."]);
+    exit;
+}
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    #http_response_code(400);
-    echo json_encode(["error" => "Invalid email"]);
+    echo json_encode(["success" => false, "error" => "Invalid email format."]);
     exit;
 }
 
-$hash = password_hash($password, PASSWORD_BCRYPT);
+// --- Check for existing user ---
+$stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+$stmt->bind_param("ss", $username, $email);
+$stmt->execute();
+if ($stmt->get_result()->num_rows > 0) {
+    echo json_encode(["success" => false, "error" => "Username or email already exists."]);
+    exit;
+}
 
-$stmt = $conn->prepare("INSERT INTO users (username, display_name, email, password_hash) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("ssss", $username, $display_name, $email, $hash);
+// --- Create User with verification code ---
+$hash = password_hash($password, PASSWORD_BCRYPT);
+$verification_code = random_int(100000, 999999); // 6-digit code
+
+// Insert a basic user entry, not yet fully profiled
+$stmt = $conn->prepare("INSERT INTO users (username, display_name, email, password_hash, verification_code, email_verified) VALUES (?, ?, ?, ?, ?, FALSE)");
+$stmt->bind_param("sssss", $username, $default_display_name, $email, $hash, $verification_code);
 
 if ($stmt->execute()) {
-    $new_user_id = $stmt->insert_id;  // Get new user's ID
+    $to = $email;
+    $subject = "Verify Your Account - Perfect Chat";
+    
+    // To send HTML mail, the Content-type header must be set
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= 'From: <no-reply@perfectchat.com>' . "\r\n"; // Replace with your domain
 
-    // ✅ Create inbox table for this user
-    $inbox_table = "inbox_" . intval($new_user_id);
-    $create_inbox_sql = "
-        CREATE TABLE $inbox_table (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            sender_id INT NOT NULL,
-            message TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
-        )
+    $message = "
+    <html>
+    <head>
+        <title>Verification Code</title>
+    </head>
+    <body>
+        <h2>Welcome to Perfect Chat!</h2>
+        <p>Your verification code is: <b>$verification_code</b></p>
+        <p>Please enter this code on the registration page to complete your signup.</p>
+    </body>
+    </html>
     ";
-    if ($conn->query($create_inbox_sql)) {
-        error_log("Inbox created for user $new_user_id");
+
+    // The @ symbol suppresses errors if mail() fails, which is common on local dev environments
+    if (@mail($to, $subject, $message, $headers)) {
+        echo json_encode(["success" => true]);
     } else {
-        error_log("Failed to create inbox for $new_user_id : " . $conn->error);
+        // Even if mail fails, we don't want to block registration.
+        // Log the error for the developer to see.
+        error_log("Email sending failed for $to. Code: $verification_code");
+        // Still return success to the user so they can manually use the code from the logs.
+        echo json_encode(["success" => true, "warning" => "Could not send verification email. Check server logs."]);
     }
-
-    // ✅ Create contacts_<user_id> table
-    $contacts_table = "contacts_" . intval($new_user_id);
-    $create_contacts_sql = "
-        CREATE TABLE $contacts_table (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            contact_id INT NOT NULL,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (contact_id) REFERENCES users(id) ON DELETE CASCADE
-        )
-    ";
-    if ($conn->query($create_contacts_sql)) {
-        error_log("Contacts table created for user $new_user_id");
-    } else {
-        error_log("Failed to create contacts for $new_user_id: " . $conn->error);
-    }
-
-
-    echo json_encode(["success" => true]);
 } else {
-    http_response_code(409); // Conflict (email exists)
-    echo json_encode(["error" => "Email already registered"]);
+    echo json_encode(["success" => false, "error" => "Failed to create account."]);
 }
 ?>
 

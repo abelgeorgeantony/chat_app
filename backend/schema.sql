@@ -8,6 +8,8 @@ CREATE TABLE users (
     bio TEXT DEFAULT NULL,
     last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_online BOOLEAN DEFAULT FALSE,
+    verification_code VARCHAR(10) DEFAULT NULL,
+    profile_picture_url VARCHAR(255) DEFAULT NULL,
     email_verified BOOLEAN DEFAULT FALSE,
     account_status ENUM('active', 'suspended', 'deleted') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

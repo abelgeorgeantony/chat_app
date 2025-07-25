@@ -3,6 +3,54 @@ let registrationState = {
     token: ''
 };
 
+// --- Page Load Logic ---
+// This runs when the page is loaded to show the correct step.
+document.addEventListener('DOMContentLoaded', () => {
+    initializeRegistrationFlow();
+
+    // Attach event listener for profile picture preview if on the right page
+    const pfpInput = document.getElementById('pfp_input');
+    if (pfpInput) {
+        pfpInput.onchange = (event) => {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('pfp-preview').src = URL.createObjectURL(file);
+            }
+        };
+    }
+});
+
+function initializeRegistrationFlow() {
+    const step = getCookie('registration_step');
+    if (step === '3') {
+        // If they are on step 3, we need their auth token to proceed
+        const authToken = getCookie('auth_token');
+        if (authToken) {
+            registrationState.token = authToken;
+            showStep(3);
+        } else {
+            // If token is missing, they must start over.
+            deleteCookie('registration_step');
+            showStep(1);
+        }
+    } else if (step === '2') {
+        // We also need the email they used to get here
+        const regEmail = getCookie('registration_email');
+        if (regEmail) {
+            registrationState.email = regEmail;
+            document.getElementById('verification-email-display').textContent = regEmail;
+            showStep(2);
+        } else {
+            // If email is missing, start over
+            deleteCookie('registration_step');
+            showStep(1);
+        }
+    } else {
+        // Default to step 1
+        showStep(1);
+    }
+}
+
 // --- Main Registration Functions ---
 
 async function handleStep1(event) {
@@ -27,6 +75,11 @@ async function handleStep1(event) {
 
     if (data.success) {
         messageArea.textContent = '';
+
+	// Set cookies to remember state for step 2
+        setCookie('registration_step', '2', { maxAge: 900 }); // 15-minute expiry
+        setCookie('registration_email', registrationState.email, { maxAge: 900 });
+
         document.getElementById('verification-email-display').textContent = registrationState.email;
         showStep(2);
     } else {
@@ -55,7 +108,11 @@ async function handleStep2(event) {
     if (data.success) {
         messageArea.textContent = '';
         registrationState.token = data.token; // Save the session token
+
+	// Set auth token and update registration step
         setCookie('auth_token', registrationState.token, { maxAge: 86400 });
+        setCookie('registration_step', '3', { maxAge: 900 });
+        deleteCookie('registration_email'); // No longer needed
         showStep(3);
     } else {
         messageArea.textContent = 'Error: ' + data.error;
@@ -85,6 +142,10 @@ async function handleStep3(event) {
     const data = await res.json();
 
     if (data.success) {
+	// Clean up registration cookies on success
+        deleteCookie('registration_step');
+        deleteCookie('registration_email'); // Just in case
+	
         window.location.replace('chat.html');
     } else {
         messageArea.textContent = 'Error: ' + data.error;
