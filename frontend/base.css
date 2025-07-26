@@ -1,6 +1,67 @@
-/* === Base Styles Shared Across All Pages === */
+/* === Color Variables for Theming === */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --text-color-light: #666;
+  --primary-color: #007bff;
+  --primary-color-hover: #0056b3;
+  --form-bg: white;
+  --input-bg: white;
+  --border-color: #ccc;
+  --shadow-color: rgba(0,0,0,0.1);
+  --danger-color: #e74c3c;
+  --danger-hover: #c0392b;
+  --chat-list-bg: #f5f5f5;
+  --chat-header-bg: #eee;
+  --chat-incoming-msg-bg: #eee;
+  --chat-outgoing-msg-bg: #007bff;
+  --chat-outgoing-msg-text: white;
+}
 
-/* Reset + Basic Layout */
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --text-color-light: #999;
+  --primary-color: #0d6efd;
+  --primary-color-hover: #0b5ed7;
+  --form-bg: #1e1e1e;
+  --input-bg: #2a2a2a;
+  --border-color: #444;
+  --shadow-color: rgba(255,255,255,0.1);
+  --danger-color: #dc3545;
+  --danger-hover: #bb2d3b;
+  --chat-list-bg: #1c1c1c;
+  --chat-header-bg: #2a2a2a;
+  --chat-incoming-msg-bg: #333;
+  --chat-outgoing-msg-bg: #0d6efd;
+  --chat-outgoing-msg-text: white;
+}
+
+/* === Theme Switcher Button === */
+.theme-switcher {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--form-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 5px var(--shadow-color);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  z-index: 1000;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+.theme-switcher:hover {
+  transform: scale(1.1);
+}
+
+/* === Base Styles Using Variables === */
 * {
   margin: 0;
   padding: 0;
@@ -11,41 +72,38 @@
 html, body {
   width: 100%;
   height: 100%;
-  background: #f5f5f5;
-  color: #333;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* Page-aware mobile height fix */
-/*body {
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
-}*/
-
-/* Container Defaults */
 .form-container {
+  background: var(--form-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px var(--shadow-color);
+  /* other styles remain the same */
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
-  background: white;
-  border: 1px solid #ddd;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
 }
 
-/* Headings */
 h1, h2, h3 {
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* Shared Form Fields */
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+textarea {
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
   border-radius: 4px;
   font-size: 1em;
 }
@@ -54,27 +112,23 @@ button {
   padding: 10px;
   margin-top: 10px;
   font-size: 1em;
-  background: #007bff;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 button:hover {
-  background: #0056b3;
+  background: var(--primary-color-hover);
 }
 
-/* Logout / Danger Buttons */
 .logout-btn {
-  background: #e74c3c;
+  background: var(--danger-color);
 }
 
 .logout-btn:hover {
-  background: #c0392b;
+  background: var(--danger-hover);
 }
 
-/* Utility Classes */
-.text-center {
-  text-align: center;
-}

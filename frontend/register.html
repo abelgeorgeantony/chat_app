@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="auth.css">
 </head>
 <body class="auth-page">
-
+<button id="theme-switcher" class="theme-switcher" onclick="toggleTheme()">🌙</button>
 <div class="form-container">
     <!-- Step 1: Basic Info -->
     <div id="step1" class="step active">
@@ -41,8 +41,17 @@
         <p>We've sent a 6-digit code to <b id="verification-email-display"></b>. Please enter it below.</p>
         <form id="form-step2" onsubmit="handleStep2(event)">
 	    <div id="input-container">
-            <label for="verification_code">Verification Code:</label>
-            <input type="number" id="verification_code" placeholder="Enter 6-digit code" required maxlength="6">
+            <label for="verification_code_1">Verification Code:</label>
+            <div class="code-container" id="code-inputs">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_1" maxlength="1" required>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_2" maxlength="1" required>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_3" maxlength="1" required>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_4" maxlength="1" required>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_5" maxlength="1" required>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="code-input" id="verification_code_6" maxlength="1" required>
+            </div>
+            <!-- A hidden input to hold the combined code for submission -->
+            <input type="hidden" id="verification_code" name="verification_code" maxlength="6">
 	    </div>
             <button type="submit">Verify & Continue</button>
         </form>

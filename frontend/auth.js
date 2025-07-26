@@ -13,6 +13,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('reg_username');
     usernameInput.addEventListener('keyup', checkUsernameAvailability);
 
+    // for page 2
+    const codeInputsContainer = document.getElementById('code-inputs');
+    if (codeInputsContainer) {
+        const inputs = codeInputsContainer.querySelectorAll('.code-input');
+        const hiddenInput = document.getElementById('verification_code');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Move to next input if a digit is entered
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                updateHiddenInput();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                // Move to previous input on backspace if current is empty
+                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text').trim();
+                if (pasteData.length === 6 && /^\d{6}$/.test(pasteData)) {
+                    inputs.forEach((box, i) => {
+                        box.value = pasteData[i];
+                    });
+                    inputs[inputs.length - 1].focus();
+                    updateHiddenInput();
+                }
+            });
+        });
+
+        function updateHiddenInput() {
+            let combinedCode = '';
+            inputs.forEach(input => {
+                combinedCode += input.value;
+            });
+            hiddenInput.value = combinedCode;
+        }
+    }
+
     // Attach event listener for profile picture preview if on the right page
     const pfpInput = document.getElementById('pfp_input');
     if (pfpInput) {
