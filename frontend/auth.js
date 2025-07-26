@@ -6,7 +6,12 @@ let registrationState = {
 // --- Page Load Logic ---
 // This runs when the page is loaded to show the correct step.
 document.addEventListener('DOMContentLoaded', () => {
+    const registrationForm = document.getElementById('step1');
+
+    if (registrationForm) {
     initializeRegistrationFlow();
+    const usernameInput = document.getElementById('reg_username');
+    usernameInput.addEventListener('keyup', checkUsernameAvailability);
 
     // Attach event listener for profile picture preview if on the right page
     const pfpInput = document.getElementById('pfp_input');
@@ -18,7 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
+    }
 });
+
 
 function initializeRegistrationFlow() {
     const step = getCookie('registration_step');
@@ -49,6 +56,29 @@ function initializeRegistrationFlow() {
         // Default to step 1
         showStep(1);
     }
+}
+
+async function checkUsernameAvailability() {
+        const username = usernameInput.value;
+        const feedbackEl = document.getElementById('username-feedback');
+        if (username.length < 3) {
+            feedbackEl.textContent = '';
+            return;
+        }
+
+        const res = await fetch(API + 'check_username.php', {
+            method: 'POST',
+            body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        
+        if (data.available) {
+            feedbackEl.textContent = 'Username is available!';
+            feedbackEl.className = 'available';
+        } else {
+            feedbackEl.textContent = 'Username is taken.';
+            feedbackEl.className = 'taken';
+        }
 }
 
 // --- Main Registration Functions ---

@@ -59,7 +59,8 @@ if ($stmt->execute()) {
     ";
 
     // The @ symbol suppresses errors if mail() fails, which is common on local dev environments
-    if (@mail($to, $subject, $message, $headers)) {
+    if (mail($to, $subject, $message, $headers)) {
+	error_log("Verification code: $verification_code");
         echo json_encode(["success" => true]);
     } else {
         // Even if mail fails, we don't want to block registration.

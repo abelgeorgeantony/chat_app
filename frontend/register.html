@@ -6,32 +6,6 @@
     <title>Register - Perfect Chat</title>
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="auth.css">
-    <style>
-        /* Additional styles for the multi-step form */
-        .step { display: none; }
-        .step.active { display: block; }
-        .form-container { max-width: 450px; }
-        #pfp-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 2px dashed #ccc;
-            margin: 10px auto;
-            display: block;
-            object-fit: cover;
-            cursor: pointer;
-            background-color: #f5f5f5;
-        }
-        /* Styles for username availability feedback */
-        #username-feedback {
-            font-size: 0.9em;
-            margin-top: -10px;
-            margin-bottom: 10px;
-            height: 1em;
-        }
-        #username-feedback.available { color: green; }
-        #username-feedback.taken { color: red; }
-    </style>
 </head>
 <body class="auth-page">
 
@@ -40,15 +14,21 @@
     <div id="step1" class="step active">
         <h2>Step 1: Create Your Account</h2>
         <form id="form-step1" onsubmit="handleStep1(event)">
+	    <div id="input-container">
             <label for="reg_username">Username:</label>
             <input type="text" id="reg_username" placeholder="Choose a unique username" required>
             <div id="username-feedback"></div>
+	    </div>
 
-            <label for="reg_email">Email:</label>
+            <div id="input-container">
+	    <label for="reg_email">Email:</label>
             <input type="email" id="reg_email" placeholder="Your email address" required>
+	    </div>
 
-            <label for="reg_pass">Password:</label>
+            <div id="input-container">
+	    <label for="reg_pass">Password:</label>
             <input type="password" id="reg_pass" placeholder="Create a strong password" required>
+	    </div>
 
             <button type="submit">Continue</button>
             <p class="auth-links">Already have an account? <a href="login.html">Login</a></p>
@@ -60,8 +40,10 @@
         <h2>Step 2: Verify Your Email</h2>
         <p>We've sent a 6-digit code to <b id="verification-email-display"></b>. Please enter it below.</p>
         <form id="form-step2" onsubmit="handleStep2(event)">
+	    <div id="input-container">
             <label for="verification_code">Verification Code:</label>
             <input type="number" id="verification_code" placeholder="Enter 6-digit code" required maxlength="6">
+	    </div>
             <button type="submit">Verify & Continue</button>
         </form>
     </div>
@@ -73,11 +55,15 @@
             <img id="pfp-preview" src="https://placehold.co/120x120/f0f0f0/ccc?text=Upload" alt="Profile Preview" onclick="document.getElementById('pfp_input').click()">
             <input type="file" id="pfp_input" accept="image/*" style="display:none;">
 
+	    <div id="input-container">
             <label for="reg_name">Display Name:</label>
             <input type="text" id="reg_name" placeholder="How you'll appear to others" required>
+	    </div>
 
+	    <div id="input-container">
             <label for="reg_bio">Bio:</label>
             <textarea id="reg_bio" rows="3" placeholder="Tell us a little about yourself..."></textarea>
+	    </div>
             
             <button type="submit">Finish & Start Chatting</button>
         </form>
@@ -89,38 +75,6 @@
 
 <script src="utils.js"></script>
 <script src="auth.js"></script>
-<script>
-    // This script tag should be inside register.html, or linked via auth.js
-    // For clarity, it's included here.
-    
-    // Add event listener for live username check
-    const usernameInput = document.getElementById('reg_username');
-    usernameInput.addEventListener('keyup', checkUsernameAvailability);
-
-    async function checkUsernameAvailability() {
-        const username = usernameInput.value;
-        const feedbackEl = document.getElementById('username-feedback');
-        if (username.length < 3) {
-            feedbackEl.textContent = '';
-            return;
-        }
-
-        const res = await fetch(API + 'check_username.php', {
-            method: 'POST',
-            body: JSON.stringify({ username })
-        });
-        const data = await res.json();
-        
-        if (data.available) {
-            feedbackEl.textContent = 'Username is available!';
-            feedbackEl.className = 'available';
-        } else {
-            feedbackEl.textContent = 'Username is taken.';
-            feedbackEl.className = 'taken';
-        }
-    }
-</script>
-
 </body>
 </html>
 
